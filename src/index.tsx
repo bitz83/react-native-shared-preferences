@@ -10,7 +10,7 @@ interface SharedPreferencesType {
 
   getInt(key: string, defaultValue?: number): Promise<number>
   getString(key: string, defaultValue?: string): Promise<string>
-  getJSON<T extends object>(
+  getJSON<T extends any>(
     key: string,
     defaultValue?: T | null,
   ): Promise<T | null>
@@ -105,7 +105,7 @@ class SharedPreferencesImpl implements SharedPreferencesType {
     }
   }
 
-  async getJSON<T extends object>(
+  async getJSON<T extends any>(
     key: string,
     defaultValue: T | null = null,
   ): Promise<T | null> {
