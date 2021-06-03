@@ -84,4 +84,9 @@ public class SharedPreferencesModule extends ReactContextBaseJavaModule {
     WritableMap map = Arguments.makeNativeMap((Map<String, Object>) all);
     promise.resolve(map);
   }
+
+  @ReactMethod
+  public void removeValue(String key) {
+    preferences.edit().remove(key).apply();
+  }
 }

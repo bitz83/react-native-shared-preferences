@@ -1,6 +1,5 @@
 import * as React from 'react'
-
-import {StyleSheet, View, Text} from 'react-native'
+import {StyleSheet, Text, View} from 'react-native'
 import {sharedPreferences} from 'react-native-shared-preferences'
 
 export default function App() {
@@ -12,12 +11,18 @@ export default function App() {
       sharedPreferences.setInt('keyInt', 0.0)
       sharedPreferences.setFloat('keyFloat', 0.2)
       sharedPreferences.setString('keyString', 'some strig')
+      sharedPreferences.setString('keyToRemoveString', 'valueToRemove')
+      sharedPreferences.removeValue('keyToRemoveString')
       sharedPreferences.setJSON('keyStringJSON', {one: 'one'})
 
       console.log('getBool', await sharedPreferences.getBool('keyBool'))
       console.log('getBool1', await sharedPreferences.getBool('keyBool1'))
       console.log('getInt', await sharedPreferences.getInt('keyInt'))
       console.log('getFloat', await sharedPreferences.getFloat('keyFloat'))
+      console.log(
+        'keyToRemoveString',
+        await sharedPreferences.getString('keyToRemoveString', 'valueRemoved'),
+      )
       console.log(
         'getString',
         await sharedPreferences.getString('keyString', 'default'),

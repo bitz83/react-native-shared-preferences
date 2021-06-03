@@ -2,22 +2,23 @@ import Foundation
 
 @objc(SharedPreferences)
 class SharedPreferences: NSObject {
-    let defaults = UserDefaults.standard
-    let keyPrefix = "SharedPreferences_"
+    lazy var identifier = Bundle.main.bundleIdentifier!
+    lazy var suiteName = "\(identifier)_preferences"
+    lazy var defaults = UserDefaults.init(suiteName: suiteName)!
 
     @objc
     func setInt(_ key: String, value: Int) {
-        defaults.set(value, forKey: "\(keyPrefix)\(key)")
+        defaults.set(value, forKey: key)
     }
     
     @objc
     func setString(_ key: String, value: String) {
-        defaults.set(value, forKey: "\(keyPrefix)\(key)")
+        defaults.set(value, forKey: key)
     }
     
     @objc
     func setBool(_ key: String, value: Bool) {
-        defaults.set(value, forKey: "\(keyPrefix)\(key)")
+        defaults.set(value, forKey: key)
     }
     
     @objc
@@ -32,7 +33,7 @@ class SharedPreferences: NSObject {
         resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        resolve(defaults.integer(forKey: "\(keyPrefix)\(key)"))
+        resolve(defaults.integer(forKey: key))
     }
     
     @objc
@@ -41,7 +42,7 @@ class SharedPreferences: NSObject {
         resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        resolve(defaults.string(forKey: "\(keyPrefix)\(key)"))
+        resolve(defaults.string(forKey: key))
     }
     
     @objc
@@ -50,7 +51,7 @@ class SharedPreferences: NSObject {
         resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        resolve(defaults.float(forKey: "\(keyPrefix)\(key)"))
+        resolve(defaults.float(forKey: key))
     }
     
     @objc
@@ -59,7 +60,7 @@ class SharedPreferences: NSObject {
         resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        resolve(defaults.bool(forKey: "\(keyPrefix)\(key)"))
+        resolve(defaults.bool(forKey: key))
     }
     
     @objc
@@ -67,9 +68,9 @@ class SharedPreferences: NSObject {
         _ resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        resolve(defaults.dictionaryRepresentation().keys.filter {
-            $0.starts(with: keyPrefix)
-        }.map { $0.replacingOccurrences(of: keyPrefix, with: "") })
+        
+        let all = defaults.persistentDomain(forName: suiteName) ?? [:]
+        resolve(Array(all.keys))
     }
     
     @objc
@@ -77,12 +78,11 @@ class SharedPreferences: NSObject {
         _ resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        var result: [String: Any] = [:]
-        for entry in defaults.dictionaryRepresentation() {
-            if entry.key.starts(with: keyPrefix) {
-                result[entry.key.replacingOccurrences(of: keyPrefix, with: "")] = entry.value
-            }
-        }
-        resolve(result)
+        resolve(defaults.persistentDomain(forName: suiteName))
+    }
+    
+    @objc
+    func removeValue(_ key: String) {
+        defaults.removeObject(forKey: key)
     }
 }

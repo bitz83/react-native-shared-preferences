@@ -15,6 +15,7 @@ interface SharedPreferencesType {
   getBool(key: string): Promise<boolean>
   getKeys(): Promise<Array<string>>
   getAll(defaultValue: object): Promise<any>
+  removeValue(key: string): void
 }
 
 const {SharedPreferences} = NativeModules
@@ -84,6 +85,10 @@ class SharedPreferencesImpl implements SharedPreferencesType {
     const value = await SharedPreferences.getAll()
     if (!value) return defaultValue
     return value
+  }
+
+  removeValue(key: string) {
+    SharedPreferences.removeValue(key)
   }
 }
 
