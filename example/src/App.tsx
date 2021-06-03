@@ -10,7 +10,7 @@ export default function App() {
       sharedPreferences.setBool('keyBool', true)
       sharedPreferences.setInt('keyInt', 0.0)
       sharedPreferences.setFloat('keyFloat', 0.2)
-      sharedPreferences.setString('keyString', 'some strig')
+      sharedPreferences.setString('keyString', 'null')
       sharedPreferences.setString('keyToRemoveString', 'valueToRemove')
       sharedPreferences.removeValue('keyToRemoveString')
       sharedPreferences.setJSON('keyStringJSON', {one: 'one'})

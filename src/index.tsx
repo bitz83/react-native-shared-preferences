@@ -24,28 +24,38 @@ const isFloat = (n: any) => {
   return Number(n) === n && n % 1 !== 0
 }
 
+const validateIsNonNull = (key: string, value: any) => {
+  if (value === null || value === undefined)
+    throw new Error(`Passed value: ${value} for key: ${key} is not string type`)
+}
+
 class SharedPreferencesImpl implements SharedPreferencesType {
   setBool(key: string, value: boolean): void {
+    validateIsNonNull(key, value)
     SharedPreferences.setBool(key, value)
   }
 
   setFloat(key: string, value: number): void {
+    validateIsNonNull(key, value)
     if (value !== 0 && !isFloat(value))
-      throw new Error(`Passed value: ${value} is not double type`)
+      throw new Error(`Passed value: ${value} key: ${key} is not double type`)
     SharedPreferences.setString(key, value.toString())
   }
 
   setInt(key: string, value: number): void {
+    validateIsNonNull(key, value)
     if (!Number.isInteger(value))
-      throw new Error(`Passed value: ${value} is not integer type`)
+      throw new Error(`Passed value: ${value} key: ${key} is not integer type`)
     SharedPreferences.setInt(key, value)
   }
 
   setString(key: string, value: string): void {
+    validateIsNonNull(key, value)
     SharedPreferences.setString(key, value)
   }
 
   setJSON(key: string, value: object) {
+    validateIsNonNull(key, value)
     SharedPreferences.setString(key, JSON.stringify(value))
   }
 
