@@ -24,6 +24,9 @@ export default function App() {
       )
 
       console.log('json', await sharedPreferences.getJSON('keyStringJSON', {}))
+      console.log('json', await sharedPreferences.getKeys())
+      const all = await sharedPreferences.getAll({})
+      console.log('json', all)
     })()
   }, [])
 

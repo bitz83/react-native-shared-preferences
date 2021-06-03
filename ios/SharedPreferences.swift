@@ -2,30 +2,27 @@ import Foundation
 
 @objc(SharedPreferences)
 class SharedPreferences: NSObject {
+    let defaults = UserDefaults.standard
+    let keyPrefix = "SharedPreferences_"
 
     @objc
     func setInt(_ key: String, value: Int) {
-        UserDefaults.standard.set(value, forKey: key)
+        defaults.set(value, forKey: "\(keyPrefix)\(key)")
     }
     
     @objc
     func setString(_ key: String, value: String) {
-        UserDefaults.standard.set(value, forKey: key)
-    }
-    
-    @objc
-    func setFloat(_ key: String, value: Float) {
-        UserDefaults.standard.set(value, forKey: key)
+        defaults.set(value, forKey: "\(keyPrefix)\(key)")
     }
     
     @objc
     func setBool(_ key: String, value: Bool) {
-        UserDefaults.standard.set(value, forKey: key)
+        defaults.set(value, forKey: "\(keyPrefix)\(key)")
     }
     
     @objc
     func synchronize() {
-        UserDefaults.standard.synchronize()
+        defaults.synchronize()
     }
     
     
@@ -35,7 +32,7 @@ class SharedPreferences: NSObject {
         resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        resolve(UserDefaults.standard.integer(forKey: key))
+        resolve(defaults.integer(forKey: "\(keyPrefix)\(key)"))
     }
     
     @objc
@@ -44,7 +41,7 @@ class SharedPreferences: NSObject {
         resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        resolve(UserDefaults.standard.string(forKey: key))
+        resolve(defaults.string(forKey: "\(keyPrefix)\(key)"))
     }
     
     @objc
@@ -53,7 +50,7 @@ class SharedPreferences: NSObject {
         resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        resolve(UserDefaults.standard.float(forKey: key))
+        resolve(defaults.float(forKey: "\(keyPrefix)\(key)"))
     }
     
     @objc
@@ -62,6 +59,30 @@ class SharedPreferences: NSObject {
         resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        resolve(UserDefaults.standard.bool(forKey: key))
+        resolve(defaults.bool(forKey: "\(keyPrefix)\(key)"))
+    }
+    
+    @objc
+    func getKeys(
+        _ resolve:RCTPromiseResolveBlock,
+        reject:RCTPromiseRejectBlock
+    ) {
+        resolve(defaults.dictionaryRepresentation().keys.filter {
+            $0.starts(with: keyPrefix)
+        }.map { $0.replacingOccurrences(of: keyPrefix, with: "") })
+    }
+    
+    @objc
+    func getAll(
+        _ resolve:RCTPromiseResolveBlock,
+        reject:RCTPromiseRejectBlock
+    ) {
+        var result: [String: Any] = [:]
+        for entry in defaults.dictionaryRepresentation() {
+            if entry.key.starts(with: keyPrefix) {
+                result[entry.key.replacingOccurrences(of: keyPrefix, with: "")] = entry.value
+            }
+        }
+        resolve(result)
     }
 }

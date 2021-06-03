@@ -6,11 +6,18 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 
 @ReactModule(name = SharedPreferencesModule.NAME)
 public class SharedPreferencesModule extends ReactContextBaseJavaModule {
@@ -40,11 +47,6 @@ public class SharedPreferencesModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void setFloat(String key, String value) {
-    preferences.edit().putString(key, value).apply();
-  }
-
-  @ReactMethod
   public void setBool(String key, boolean value) {
     preferences.edit().putBoolean(key, value).apply();
   }
@@ -66,12 +68,20 @@ public class SharedPreferencesModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void getFloat(String key, Promise promise) {
-    promise.resolve(preferences.getString(key, "0.0"));
+  public void getBool(String key, Promise promise) {
+    promise.resolve(preferences.getBoolean(key, false));
   }
 
   @ReactMethod
-  public void getBool(String key, Promise promise) {
-    promise.resolve(preferences.getBoolean(key, false));
+  public void getKeys(Promise promise) {
+    WritableArray writableArray = Arguments.fromList(new ArrayList<>(preferences.getAll().keySet()));
+    promise.resolve(writableArray);
+  }
+
+  @ReactMethod
+  public void getAll(Promise promise) {
+    Map<String, ?> all = preferences.getAll();
+    WritableMap map = Arguments.makeNativeMap((Map<String, Object>) all);
+    promise.resolve(map);
   }
 }

@@ -13,6 +13,8 @@ interface SharedPreferencesType {
   getJSON(key: string, defaultValue: object): Promise<object>
   getFloat(key: string): Promise<number>
   getBool(key: string): Promise<boolean>
+  getKeys(): Promise<Array<string>>
+  getAll(defaultValue: object): Promise<any>
 }
 
 const {SharedPreferences} = NativeModules
@@ -29,11 +31,7 @@ class SharedPreferencesImpl implements SharedPreferencesType {
   setFloat(key: string, value: number): void {
     if (value !== 0 && !isFloat(value))
       throw new Error(`Passed value: ${value} is not double type`)
-    if (Platform.OS === 'android') {
-      SharedPreferences.setFloat(key, value.toString())
-      return
-    }
-    SharedPreferences.setFloat(key, value)
+    SharedPreferences.setString(key, value.toString())
   }
 
   setInt(key: string, value: number): void {
@@ -59,10 +57,7 @@ class SharedPreferencesImpl implements SharedPreferencesType {
   }
 
   async getFloat(key: string): Promise<number> {
-    if (Platform.OS === 'android') {
-      return parseFloat(await SharedPreferences.getFloat(key))
-    }
-    return SharedPreferences.getFloat(key)
+    return parseFloat(await SharedPreferences.getString(key))
   }
 
   getInt(key: string): Promise<number> {
@@ -79,6 +74,16 @@ class SharedPreferencesImpl implements SharedPreferencesType {
     const value = await SharedPreferences.getString(key)
     if (!value) return defaultValue
     return JSON.parse(value)
+  }
+
+  getKeys(): Promise<Array<string>> {
+    return SharedPreferences.getKeys()
+  }
+
+  async getAll(defaultValue: object): Promise<any> {
+    const value = await SharedPreferences.getAll()
+    if (!value) return defaultValue
+    return value
   }
 }
 
