@@ -22,5 +22,7 @@ RCT_EXTERN_METHOD(getKeys:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(getAll:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(removeValue:(NSString*)key)
+RCT_EXTERN_METHOD(removeValues:(NSArray*)keys)
+RCT_EXTERN_METHOD(removeAll)
 
 @end

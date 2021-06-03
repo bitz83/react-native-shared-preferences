@@ -22,13 +22,15 @@ sharedPreferences.setString('keyString', 'stringValue')
 sharedPreferences.setJSON('keyStringJSON', {one: 'one'})
 
 
-await sharedPreferences.getBool('keyBool')
-await sharedPreferences.getInt('keyInt')
-await sharedPreferences.getFloat('keyFloat')
+await sharedPreferences.getBool('keyBool', true)
+await sharedPreferences.getInt('keyInt', 1)
+await sharedPreferences.getFloat('keyFloat', 0.5)
 await sharedPreferences.getString('keyString', 'default')
 await sharedPreferences.getJSON('keyStringJSON', {})
 await sharedPreferences.getKeys()
 await sharedPreferences.getAll({})
+await sharedPreferences.removeValue('key')
+await sharedPreferences.removeAll()
 ```
 
 ## Contributing

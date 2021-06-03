@@ -3,8 +3,6 @@ import {StyleSheet, Text, View} from 'react-native'
 import {sharedPreferences} from 'react-native-shared-preferences'
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>()
-
   React.useEffect(() => {
     ;(async () => {
       sharedPreferences.setBool('keyBool', true)
@@ -14,32 +12,34 @@ export default function App() {
       sharedPreferences.setString('keyToRemoveString', 'valueToRemove')
       sharedPreferences.removeValue('keyToRemoveString')
       sharedPreferences.setJSON('keyStringJSON', {one: 'one'})
+      sharedPreferences.removeValues(['keyInt', 'keyFloat'])
 
-      console.log('getBool', await sharedPreferences.getBool('keyBool'))
-      console.log('getBool1', await sharedPreferences.getBool('keyBool1'))
-      console.log('getInt', await sharedPreferences.getInt('keyInt'))
-      console.log('getFloat', await sharedPreferences.getFloat('keyFloat'))
-      console.log(
-        'keyToRemoveString',
-        await sharedPreferences.getString('keyToRemoveString', 'valueRemoved'),
-      )
-      console.log(
-        'getString',
-        await sharedPreferences.getString('keyString', 'default'),
-      )
+      console.log('bool', await sharedPreferences.getAll())
 
-      console.log('json', await sharedPreferences.getJSON('keyStringJSON', {}))
-      console.log('json', await sharedPreferences.getKeys())
-      const all = await sharedPreferences.getAll({})
-      console.log('json', all)
+      // console.log('getBool', await sharedPreferences.getBool('keyBool', false))
+      // console.log(
+      //   'getBool1',
+      //   await sharedPreferences.getBool('keyBool1', false),
+      // )
+      // console.log('getInt', await sharedPreferences.getInt('keyInt', 0))
+      // console.log('getFloat', await sharedPreferences.getFloat('keyFloat', 0))
+      // console.log(
+      //   'keyToRemoveString',
+      //   await sharedPreferences.getString('keyToRemoveString', 'valueRemoved'),
+      // )
+      // console.log(
+      //   'getString',
+      //   await sharedPreferences.getString('keyString', 'default'),
+      // )
+      //
+      // console.log('json', await sharedPreferences.getJSON('keyStringJSON', {}))
+      // console.log('json', await sharedPreferences.getKeys())
+      // const all = await sharedPreferences.getAll({})
+      // console.log('json', all)
     })()
   }, [])
 
-  return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
-  )
+  return <View style={styles.container} />
 }
 
 const styles = StyleSheet.create({

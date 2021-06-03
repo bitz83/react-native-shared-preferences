@@ -2,6 +2,8 @@ import Foundation
 
 @objc(SharedPreferences)
 class SharedPreferences: NSObject {
+    private let VALUE_NOT_EXISTS = "VALUE_NOT_EXISTS";
+    private let VALUE_NOT_EXISTS_CODE = "1";
     lazy var identifier = Bundle.main.bundleIdentifier!
     lazy var suiteName = "\(identifier)_preferences"
     lazy var defaults = UserDefaults.init(suiteName: suiteName)!
@@ -33,6 +35,10 @@ class SharedPreferences: NSObject {
         resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
+        if defaults.object(forKey: key) == nil {
+            reject(VALUE_NOT_EXISTS_CODE, VALUE_NOT_EXISTS, nil)
+            return
+        }
         resolve(defaults.integer(forKey: key))
     }
     
@@ -42,16 +48,11 @@ class SharedPreferences: NSObject {
         resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
+        if defaults.object(forKey: key) == nil {
+            reject(VALUE_NOT_EXISTS_CODE, VALUE_NOT_EXISTS, nil)
+            return
+        }
         resolve(defaults.string(forKey: key))
-    }
-    
-    @objc
-    func getFloat(
-        _ key: String,
-        resolve:RCTPromiseResolveBlock,
-        reject:RCTPromiseRejectBlock
-    ) {
-        resolve(defaults.float(forKey: key))
     }
     
     @objc
@@ -60,6 +61,10 @@ class SharedPreferences: NSObject {
         resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
+        if defaults.object(forKey: key) == nil {
+            reject(VALUE_NOT_EXISTS_CODE, VALUE_NOT_EXISTS, nil)
+            return
+        }
         resolve(defaults.bool(forKey: key))
     }
     
@@ -78,11 +83,27 @@ class SharedPreferences: NSObject {
         _ resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        resolve(defaults.persistentDomain(forName: suiteName))
+        resolve(defaults.persistentDomain(forName: suiteName) ?? [:])
     }
     
     @objc
     func removeValue(_ key: String) {
         defaults.removeObject(forKey: key)
+    }
+    
+    @objc
+    func removeValues(_ keys: NSArray) {
+        for key in keys {
+            if key is NSString {
+                defaults.removeObject(forKey: key as! String)
+            }
+        }
+    }
+    
+    @objc
+    func removeAll() {
+        defaults.persistentDomain(forName: suiteName)?.forEach {
+            defaults.removeObject(forKey: $0.key)
+        }
     }
 }

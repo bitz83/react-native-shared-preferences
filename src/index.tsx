@@ -8,14 +8,19 @@ interface SharedPreferencesType {
   setBool(key: string, value: boolean): void
   synchronize(): void
 
-  getInt(key: string): Promise<number>
-  getString(key: string, defaultValue: string): Promise<string>
-  getJSON(key: string, defaultValue: object): Promise<any>
-  getFloat(key: string): Promise<number>
-  getBool(key: string): Promise<boolean>
+  getInt(key: string, defaultValue?: number): Promise<number>
+  getString(key: string, defaultValue?: string): Promise<string>
+  getJSON<T extends object>(
+    key: string,
+    defaultValue?: T | null,
+  ): Promise<T | null>
+  getFloat(key: string, defaultValue?: number): Promise<number>
+  getBool(key: string, defaultValue?: boolean): Promise<boolean>
   getKeys(): Promise<Array<string>>
-  getAll(defaultValue: object): Promise<any>
+  getAll(): Promise<any>
   removeValue(key: string): void
+  removeValues(keys: Array<string>): void
+  removeAll(): void
 }
 
 const {SharedPreferences} = NativeModules
@@ -29,6 +34,7 @@ const validateIsNonNull = (key: string, value: any) => {
     throw new Error(`Passed value: ${value} for key: ${key} is not string type`)
 }
 
+const VALUE_NOT_EXISTS = 'VALUE_NOT_EXISTS'
 class SharedPreferencesImpl implements SharedPreferencesType {
   setBool(key: string, value: boolean): void {
     validateIsNonNull(key, value)
@@ -63,42 +69,72 @@ class SharedPreferencesImpl implements SharedPreferencesType {
     SharedPreferences.synchronize()
   }
 
-  getBool(key: string): Promise<boolean> {
-    return SharedPreferences.getBool(key)
+  async getInt(key: string, defaultValue: number = -1): Promise<number> {
+    try {
+      return await SharedPreferences.getInt(key)
+    } catch (e) {
+      if (e.message === VALUE_NOT_EXISTS) return defaultValue
+      throw e
+    }
   }
 
-  async getFloat(key: string): Promise<number> {
-    return parseFloat(await SharedPreferences.getString(key))
+  async getBool(key: string, defaultValue: boolean = false): Promise<boolean> {
+    try {
+      return await SharedPreferences.getBool(key)
+    } catch (e) {
+      if (e.message === VALUE_NOT_EXISTS) return defaultValue
+      throw e
+    }
   }
 
-  getInt(key: string): Promise<number> {
-    return SharedPreferences.getInt(key)
+  async getFloat(key: string, defaultValue: number = 0.0): Promise<number> {
+    try {
+      return parseFloat(await SharedPreferences.getString(key))
+    } catch (e) {
+      if (e.message === VALUE_NOT_EXISTS) return defaultValue
+      throw e
+    }
   }
 
-  async getString(key: string, defaultValue: string): Promise<string> {
-    const value = await SharedPreferences.getString(key)
-    if (!value) return defaultValue
-    return value
+  async getString(key: string, defaultValue: string = ''): Promise<string> {
+    try {
+      return await SharedPreferences.getString(key)
+    } catch (e) {
+      if (e.message === VALUE_NOT_EXISTS) return defaultValue
+      throw e
+    }
   }
 
-  async getJSON(key: string, defaultValue: object): Promise<any> {
-    const value = await SharedPreferences.getString(key)
-    if (!value) return defaultValue
-    return JSON.parse(value)
+  async getJSON<T extends object>(
+    key: string,
+    defaultValue: T | null = null,
+  ): Promise<T | null> {
+    try {
+      return JSON.parse(await SharedPreferences.getString(key))
+    } catch (e) {
+      if (e.message === VALUE_NOT_EXISTS) return defaultValue
+      throw e
+    }
   }
 
   getKeys(): Promise<Array<string>> {
     return SharedPreferences.getKeys()
   }
 
-  async getAll(defaultValue: object): Promise<any> {
-    const value = await SharedPreferences.getAll()
-    if (!value) return defaultValue
-    return value
+  async getAll(): Promise<any> {
+    return await SharedPreferences.getAll()
   }
 
   removeValue(key: string) {
     SharedPreferences.removeValue(key)
+  }
+
+  removeValues(keys: Array<string>) {
+    SharedPreferences.removeValues(keys)
+  }
+
+  removeAll() {
+    SharedPreferences.removeAll()
   }
 }
 
