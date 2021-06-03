@@ -10,7 +10,7 @@ interface SharedPreferencesType {
 
   getInt(key: string): Promise<number>
   getString(key: string, defaultValue: string): Promise<string>
-  getJSON(key: string, defaultValue: object): Promise<object>
+  getJSON(key: string, defaultValue: object): Promise<any>
   getFloat(key: string): Promise<number>
   getBool(key: string): Promise<boolean>
   getKeys(): Promise<Array<string>>
@@ -81,7 +81,7 @@ class SharedPreferencesImpl implements SharedPreferencesType {
     return value
   }
 
-  async getJSON(key: string, defaultValue: object): Promise<object> {
+  async getJSON(key: string, defaultValue: object): Promise<any> {
     const value = await SharedPreferences.getString(key)
     if (!value) return defaultValue
     return JSON.parse(value)
