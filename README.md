@@ -10,12 +10,23 @@ npm install react-native-shared-preferences
 
 ## Usage
 
-```js
-import SharedPreferences from "react-native-shared-preferences";
+```ts
+import {sharedPreferences} from 'react-native-shared-preferences'
 
 // ...
 
-const result = await SharedPreferences.multiply(3, 7);
+sharedPreferences.setBool('keyBool', true)
+sharedPreferences.setInt('keyInt', 3)
+sharedPreferences.setFloat('keyFloat', 0.2)
+sharedPreferences.setString('keyString', 'stringValue')
+sharedPreferences.setJSON('keyStringJSON', {one: 'one'})
+
+
+await sharedPreferences.getBool('keyBool')
+await sharedPreferences.getInt('keyInt')
+await sharedPreferences.getFloat('keyFloat')
+await sharedPreferences.getString('keyString', 'default')
+await sharedPreferences.getJSON('keyStringJSON', {})
 ```
 
 ## Contributing

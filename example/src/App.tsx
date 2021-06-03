@@ -1,20 +1,37 @@
-import * as React from 'react';
+import * as React from 'react'
 
-import { StyleSheet, View, Text } from 'react-native';
-import SharedPreferences from 'react-native-shared-preferences';
+import {StyleSheet, View, Text} from 'react-native'
+import {sharedPreferences} from 'react-native-shared-preferences'
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+  const [result, setResult] = React.useState<number | undefined>()
 
   React.useEffect(() => {
-    SharedPreferences.multiply(3, 7).then(setResult);
-  }, []);
+    ;(async () => {
+      sharedPreferences.setBool('keyBool', true)
+      sharedPreferences.setInt('keyInt', 0.0)
+      sharedPreferences.setFloat('keyFloat', 0.2)
+      sharedPreferences.setString('keyString', 'some strig')
+      sharedPreferences.setJSON('keyStringJSON', {one: 'one'})
+
+      console.log('getBool', await sharedPreferences.getBool('keyBool'))
+      console.log('getBool1', await sharedPreferences.getBool('keyBool1'))
+      console.log('getInt', await sharedPreferences.getInt('keyInt'))
+      console.log('getFloat', await sharedPreferences.getFloat('keyFloat'))
+      console.log(
+        'getString',
+        await sharedPreferences.getString('keyString', 'default'),
+      )
+
+      console.log('json', await sharedPreferences.getJSON('keyStringJSON', {}))
+    })()
+  }, [])
 
   return (
     <View style={styles.container}>
       <Text>Result: {result}</Text>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -28,4 +45,4 @@ const styles = StyleSheet.create({
     height: 60,
     marginVertical: 20,
   },
-});
+})
