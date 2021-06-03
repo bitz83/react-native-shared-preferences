@@ -28,7 +28,7 @@ await sharedPreferences.getFloat('keyFloat')
 await sharedPreferences.getString('keyString', 'default')
 await sharedPreferences.getJSON('keyStringJSON', {})
 await sharedPreferences.getKeys()
-await sharedPreferences.getAll()
+await sharedPreferences.getAll({})
 ```
 
 ## Contributing
