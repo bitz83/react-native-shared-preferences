@@ -31,11 +31,30 @@ const validateIsNonNull = (key: string, value: any) => {
     throw new Error(`Passed value: ${value} for key: ${key} is not string type`)
 }
 
+type Listener = (key: string, value: any) => void
+
 const VALUE_NOT_EXISTS = 'VALUE_NOT_EXISTS'
 class SharedPreferencesImpl implements SharedPreferencesType {
+  private listeners: Array<Listener> = []
+
+  addListener(listener: Listener) {
+    const exists = this.listeners.find((l) => l === listener)
+    if (exists) return
+    this.listeners.push(listener)
+  }
+
+  removeListener(listener: Listener) {
+    this.listeners = this.listeners.filter((l) => l !== listener)
+  }
+
+  private notifyValueSaved(key: string, value: any) {
+    for (let listener of this.listeners) listener(key, value)
+  }
+
   setBool(key: string, value: boolean): void {
     validateIsNonNull(key, value)
     SharedPreferences.setBool(key, value)
+    this.notifyValueSaved(key, value)
   }
 
   setFloat(key: string, value: number): void {
@@ -43,6 +62,7 @@ class SharedPreferencesImpl implements SharedPreferencesType {
     if (value !== 0 && !isFloat(value))
       throw new Error(`Passed value: ${value} key: ${key} is not double type`)
     SharedPreferences.setString(key, value.toString())
+    this.notifyValueSaved(key, value)
   }
 
   setInt(key: string, value: number): void {
@@ -50,16 +70,19 @@ class SharedPreferencesImpl implements SharedPreferencesType {
     if (!Number.isInteger(value))
       throw new Error(`Passed value: ${value} key: ${key} is not integer type`)
     SharedPreferences.setInt(key, value)
+    this.notifyValueSaved(key, value)
   }
 
   setString(key: string, value: string): void {
     validateIsNonNull(key, value)
     SharedPreferences.setString(key, value)
+    this.notifyValueSaved(key, value)
   }
 
   setJSON(key: string, value: object) {
     validateIsNonNull(key, value)
     SharedPreferences.setString(key, JSON.stringify(value))
+    this.notifyValueSaved(key, value)
   }
 
   synchronize() {
