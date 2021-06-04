@@ -1,6 +1,9 @@
 import {NativeModules} from 'react-native'
 
 interface SharedPreferencesType {
+  addListener(listener: Listener): void
+  removeListener(listener: Listener): void
+
   setInt(key: string, value: number): void
   setString(key: string, value: string): void
   setJSON(key: string, value: object): void
