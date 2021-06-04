@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.NativeArray;
@@ -29,9 +30,23 @@ public class SharedPreferencesModule extends ReactContextBaseJavaModule {
 
   private SharedPreferences preferences;
 
+  @NonNull
+  private SharedPreferences ensurePreferences() {
+    if (preferences == null) {
+      throw new RuntimeException("SharedPreferences must be initialized first");
+    }
+    return preferences;
+  }
+
   public SharedPreferencesModule(ReactApplicationContext reactContext) {
     super(reactContext);
-    preferences = reactContext.getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+  }
+
+  @ReactMethod
+  public void initialize(@Nullable String suiteName) {
+    String name = suiteName;
+    if (name == null) suiteName = BuildConfig.LIBRARY_PACKAGE_NAME;
+    preferences = getReactApplicationContext().getSharedPreferences(suiteName, Context.MODE_PRIVATE);
   }
 
   @Override
@@ -42,73 +57,73 @@ public class SharedPreferencesModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void setInt(String key, int value) {
-    preferences.edit().putInt(key, value).apply();
+    ensurePreferences().edit().putInt(key, value).apply();
   }
 
   @ReactMethod
   public void setString(String key, String  value) {
-    preferences.edit().putString(key, value).apply();
+    ensurePreferences().edit().putString(key, value).apply();
   }
 
   @ReactMethod
   public void setBool(String key, boolean value) {
-    preferences.edit().putBoolean(key, value).apply();
+    ensurePreferences().edit().putBoolean(key, value).apply();
   }
 
   @SuppressLint("ApplySharedPref")
   @ReactMethod
   public void synchronize(String key, boolean value) {
-    preferences.edit().commit();
+    ensurePreferences().edit().commit();
   }
 
   @ReactMethod
   public void getInt(String key, Promise promise) {
-    if (!preferences.contains(key)) {
+    if (!ensurePreferences().contains(key)) {
       promise.reject(VALUE_NOT_EXISTS_CODE, VALUE_NOT_EXISTS);
       return;
     }
-    promise.resolve(preferences.getInt(key, 0));
+    promise.resolve(ensurePreferences().getInt(key, 0));
   }
 
   @ReactMethod
   public void getString(String key, Promise promise) {
-    if (!preferences.contains(key)) {
+    if (!ensurePreferences().contains(key)) {
       promise.reject(VALUE_NOT_EXISTS_CODE, VALUE_NOT_EXISTS);
       return;
     }
-    promise.resolve(preferences.getString(key, ""));
+    promise.resolve(ensurePreferences().getString(key, ""));
   }
 
   @ReactMethod
   public void getBool(String key, Promise promise) {
-    if (!preferences.contains(key)) {
+    if (!ensurePreferences().contains(key)) {
       promise.reject(VALUE_NOT_EXISTS_CODE, VALUE_NOT_EXISTS);
       return;
     }
-    promise.resolve(preferences.getBoolean(key, false));
+    promise.resolve(ensurePreferences().getBoolean(key, false));
   }
 
   @ReactMethod
   public void getKeys(Promise promise) {
-    WritableArray writableArray = Arguments.fromList(new ArrayList<>(preferences.getAll().keySet()));
+    WritableArray writableArray = Arguments.fromList(new ArrayList<>(ensurePreferences().getAll().keySet()));
     promise.resolve(writableArray);
   }
 
   @ReactMethod
   public void getAll(Promise promise) {
-    Map<String, ?> all = preferences.getAll();
+    Map<String, ?> all = ensurePreferences().getAll();
     WritableMap map = Arguments.makeNativeMap((Map<String, Object>) all);
     promise.resolve(map);
   }
 
   @ReactMethod
   public void removeValue(String key) {
-    preferences.edit().remove(key).apply();
+    ensurePreferences().edit().remove(key).apply();
   }
 
   @ReactMethod
   public void removeValues(ReadableArray keys) {
-    SharedPreferences.Editor edit = preferences.edit();
+    SharedPreferences.Editor edit = ensurePreferences().edit();
     for (int i = 0; i < keys.size(); i++) {
       String key = keys.getString(i);
       if (key != null) edit.remove(key);
@@ -118,6 +133,6 @@ public class SharedPreferencesModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void removeAll() {
-    preferences.edit().clear().apply();
+    ensurePreferences().edit().clear().apply();
   }
 }

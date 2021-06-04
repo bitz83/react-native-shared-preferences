@@ -1,6 +1,6 @@
 import {NativeModules} from 'react-native'
 
-interface SharedPreferencesType {
+interface SharedPreferences {
   addListener(listener: Listener): void
   removeListener(listener: Listener): void
 
@@ -23,7 +23,7 @@ interface SharedPreferencesType {
   removeAll(): void
 }
 
-const {SharedPreferences} = NativeModules
+const NativePrefs = NativeModules.SharedPreferences
 
 const isFloat = (n: any) => {
   return Number(n) === n && n % 1 !== 0
@@ -37,8 +37,12 @@ const validateIsNonNull = (key: string, value: any) => {
 type Listener = (key: string, value: any) => void
 
 const VALUE_NOT_EXISTS = 'VALUE_NOT_EXISTS'
-class SharedPreferencesImpl implements SharedPreferencesType {
+class SharedPreferencesImpl implements SharedPreferences {
   private listeners: Array<Listener> = []
+
+  constructor(suiteName?: string) {
+    NativePrefs.initialize(suiteName)
+  }
 
   addListener(listener: Listener) {
     const exists = this.listeners.find((l) => l === listener)
@@ -56,7 +60,7 @@ class SharedPreferencesImpl implements SharedPreferencesType {
 
   setBool(key: string, value: boolean): void {
     validateIsNonNull(key, value)
-    SharedPreferences.setBool(key, value)
+    NativePrefs.setBool(key, value)
     this.notifyValueSaved(key, value)
   }
 
@@ -64,7 +68,7 @@ class SharedPreferencesImpl implements SharedPreferencesType {
     validateIsNonNull(key, value)
     if (value !== 0 && !isFloat(value))
       throw new Error(`Passed value: ${value} key: ${key} is not double type`)
-    SharedPreferences.setString(key, value.toString())
+    NativePrefs.setString(key, value.toString())
     this.notifyValueSaved(key, value)
   }
 
@@ -72,29 +76,29 @@ class SharedPreferencesImpl implements SharedPreferencesType {
     validateIsNonNull(key, value)
     if (!Number.isInteger(value))
       throw new Error(`Passed value: ${value} key: ${key} is not integer type`)
-    SharedPreferences.setInt(key, value)
+    NativePrefs.setInt(key, value)
     this.notifyValueSaved(key, value)
   }
 
   setString(key: string, value: string): void {
     validateIsNonNull(key, value)
-    SharedPreferences.setString(key, value)
+    NativePrefs.setString(key, value)
     this.notifyValueSaved(key, value)
   }
 
   setJSON(key: string, value: object) {
     validateIsNonNull(key, value)
-    SharedPreferences.setString(key, JSON.stringify(value))
+    NativePrefs.setString(key, JSON.stringify(value))
     this.notifyValueSaved(key, value)
   }
 
   synchronize() {
-    SharedPreferences.synchronize()
+    NativePrefs.synchronize()
   }
 
   async getInt(key: string, defaultValue: number = -1): Promise<number> {
     try {
-      return await SharedPreferences.getInt(key)
+      return await NativePrefs.getInt(key)
     } catch (e) {
       if (e.message === VALUE_NOT_EXISTS) return defaultValue
       throw e
@@ -103,7 +107,7 @@ class SharedPreferencesImpl implements SharedPreferencesType {
 
   async getBool(key: string, defaultValue: boolean = false): Promise<boolean> {
     try {
-      return await SharedPreferences.getBool(key)
+      return await NativePrefs.getBool(key)
     } catch (e) {
       if (e.message === VALUE_NOT_EXISTS) return defaultValue
       throw e
@@ -112,7 +116,7 @@ class SharedPreferencesImpl implements SharedPreferencesType {
 
   async getFloat(key: string, defaultValue: number = 0.0): Promise<number> {
     try {
-      return parseFloat(await SharedPreferences.getString(key))
+      return parseFloat(await NativePrefs.getString(key))
     } catch (e) {
       if (e.message === VALUE_NOT_EXISTS) return defaultValue
       throw e
@@ -121,7 +125,7 @@ class SharedPreferencesImpl implements SharedPreferencesType {
 
   async getString(key: string, defaultValue: string = ''): Promise<string> {
     try {
-      return await SharedPreferences.getString(key)
+      return await NativePrefs.getString(key)
     } catch (e) {
       if (e.message === VALUE_NOT_EXISTS) return defaultValue
       throw e
@@ -133,7 +137,7 @@ class SharedPreferencesImpl implements SharedPreferencesType {
     defaultValue: any | null = null,
   ): Promise<any | null> {
     try {
-      return JSON.parse(await SharedPreferences.getString(key))
+      return JSON.parse(await NativePrefs.getString(key))
     } catch (e) {
       if (e.message === VALUE_NOT_EXISTS) return defaultValue
       throw e
@@ -141,25 +145,28 @@ class SharedPreferencesImpl implements SharedPreferencesType {
   }
 
   getKeys(): Promise<Array<string>> {
-    return SharedPreferences.getKeys()
+    return NativePrefs.getKeys()
   }
 
   async getAll(): Promise<any> {
-    return await SharedPreferences.getAll()
+    return await NativePrefs.getAll()
   }
 
   removeValue(key: string) {
-    SharedPreferences.removeValue(key)
+    NativePrefs.removeValue(key)
   }
 
   removeValues(keys: Array<string>) {
-    SharedPreferences.removeValues(keys)
+    NativePrefs.removeValues(keys)
   }
 
   removeAll() {
-    SharedPreferences.removeAll()
+    NativePrefs.removeAll()
   }
 }
 
-export const sharedPreferences =
-  new SharedPreferencesImpl() as SharedPreferencesType
+export const initializeSharedPreferences = (
+  suiteName?: string,
+): SharedPreferences => {
+  return new SharedPreferencesImpl(suiteName)
+}

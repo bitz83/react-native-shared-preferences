@@ -4,28 +4,39 @@ import Foundation
 class SharedPreferences: NSObject {
     private let VALUE_NOT_EXISTS = "VALUE_NOT_EXISTS";
     private let VALUE_NOT_EXISTS_CODE = "1";
-    lazy var identifier = Bundle.main.bundleIdentifier!
-    lazy var suiteName = "\(identifier)_preferences"
-    lazy var defaults = UserDefaults.init(suiteName: suiteName)!
+    private var defaults: UserDefaults?
+    private var suiteName: String!
+    var ensureDefaults: UserDefaults {
+        guard let def = defaults else {
+            fatalError("UserDefaults must be initialized first")
+        }
+        return def
+    }
+    
+    @objc
+    func initialize(_ suiteName: String?) {
+        self.suiteName = suiteName ?? "\(Bundle.main.bundleIdentifier!)_preferences"
+        defaults = UserDefaults.init(suiteName: self.suiteName)!
+    }
 
     @objc
     func setInt(_ key: String, value: Int) {
-        defaults.set(value, forKey: key)
+        ensureDefaults.set(value, forKey: key)
     }
     
     @objc
     func setString(_ key: String, value: String) {
-        defaults.set(value, forKey: key)
+        ensureDefaults.set(value, forKey: key)
     }
     
     @objc
     func setBool(_ key: String, value: Bool) {
-        defaults.set(value, forKey: key)
+        ensureDefaults.set(value, forKey: key)
     }
     
     @objc
     func synchronize() {
-        defaults.synchronize()
+        ensureDefaults.synchronize()
     }
     
     
@@ -35,11 +46,11 @@ class SharedPreferences: NSObject {
         resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        if defaults.object(forKey: key) == nil {
+        if ensureDefaults.object(forKey: key) == nil {
             reject(VALUE_NOT_EXISTS_CODE, VALUE_NOT_EXISTS, nil)
             return
         }
-        resolve(defaults.integer(forKey: key))
+        resolve(ensureDefaults.integer(forKey: key))
     }
     
     @objc
@@ -48,11 +59,11 @@ class SharedPreferences: NSObject {
         resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        if defaults.object(forKey: key) == nil {
+        if ensureDefaults.object(forKey: key) == nil {
             reject(VALUE_NOT_EXISTS_CODE, VALUE_NOT_EXISTS, nil)
             return
         }
-        resolve(defaults.string(forKey: key))
+        resolve(ensureDefaults.string(forKey: key))
     }
     
     @objc
@@ -61,11 +72,11 @@ class SharedPreferences: NSObject {
         resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        if defaults.object(forKey: key) == nil {
+        if ensureDefaults.object(forKey: key) == nil {
             reject(VALUE_NOT_EXISTS_CODE, VALUE_NOT_EXISTS, nil)
             return
         }
-        resolve(defaults.bool(forKey: key))
+        resolve(ensureDefaults.bool(forKey: key))
     }
     
     @objc
@@ -74,7 +85,7 @@ class SharedPreferences: NSObject {
         reject:RCTPromiseRejectBlock
     ) {
         
-        let all = defaults.persistentDomain(forName: suiteName) ?? [:]
+        let all = ensureDefaults.persistentDomain(forName: suiteName) ?? [:]
         resolve(Array(all.keys))
     }
     
@@ -83,27 +94,27 @@ class SharedPreferences: NSObject {
         _ resolve:RCTPromiseResolveBlock,
         reject:RCTPromiseRejectBlock
     ) {
-        resolve(defaults.persistentDomain(forName: suiteName) ?? [:])
+        resolve(ensureDefaults.persistentDomain(forName: suiteName) ?? [:])
     }
     
     @objc
     func removeValue(_ key: String) {
-        defaults.removeObject(forKey: key)
+        ensureDefaults.removeObject(forKey: key)
     }
     
     @objc
     func removeValues(_ keys: NSArray) {
         for key in keys {
             if key is NSString {
-                defaults.removeObject(forKey: key as! String)
+                ensureDefaults.removeObject(forKey: key as! String)
             }
         }
     }
     
     @objc
     func removeAll() {
-        defaults.persistentDomain(forName: suiteName)?.forEach {
-            defaults.removeObject(forKey: $0.key)
+        ensureDefaults.persistentDomain(forName: suiteName)?.forEach {
+            ensureDefaults.removeObject(forKey: $0.key)
         }
     }
 }

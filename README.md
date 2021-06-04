@@ -15,22 +15,31 @@ import {sharedPreferences} from 'react-native-shared-preferences'
 
 // ...
 
-sharedPreferences.setBool('keyBool', true)
-sharedPreferences.setInt('keyInt', 3)
-sharedPreferences.setFloat('keyFloat', 0.2)
-sharedPreferences.setString('keyString', 'stringValue')
-sharedPreferences.setJSON('keyStringJSON', {one: 'one'})
+const preferences = initializeSharedPreferences('suiteName')
+
+preferences.setBool('keyBool', true)
+preferences.setInt('keyInt', 3)
+preferences.setFloat('keyFloat', 0.2)
+preferences.setString('keyString', 'stringValue')
+preferences.setJSON('keyStringJSON', {one: 'one'})
 
 
-await sharedPreferences.getBool('keyBool', true)
-await sharedPreferences.getInt('keyInt', 1)
-await sharedPreferences.getFloat('keyFloat', 0.5)
-await sharedPreferences.getString('keyString', 'default')
-await sharedPreferences.getJSON('keyStringJSON', {})
-await sharedPreferences.getKeys()
-await sharedPreferences.getAll({})
-await sharedPreferences.removeValue('key')
-await sharedPreferences.removeAll()
+await preferences.getBool('keyBool', true)
+await preferences.getInt('keyInt', 1)
+await preferences.getFloat('keyFloat', 0.5)
+await preferences.getString('keyString', 'default')
+await preferences.getJSON('keyStringJSON', {})
+await preferences.getKeys()
+await preferences.getAll({})
+await preferences.removeValue('key')
+await preferences.removeAll()
+
+const valueChangeListener = (key: string, value: any) => {
+  // will be notified when value did set in preferences
+}
+
+preferences.addListener(valueChangeListener)
+preferences.removeListener(valueChangeListener)
 ```
 
 ## Contributing

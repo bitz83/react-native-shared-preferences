@@ -1,40 +1,41 @@
 import * as React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
-import {sharedPreferences} from 'react-native-shared-preferences'
+import {initializeSharedPreferences} from 'react-native-shared-preferences'
 
+const prefs = initializeSharedPreferences('suiteName')
 export default function App() {
   React.useEffect(() => {
     ;(async () => {
-      sharedPreferences.setBool('keyBool', true)
-      sharedPreferences.setInt('keyInt', 0.0)
-      sharedPreferences.setFloat('keyFloat', 0.2)
-      sharedPreferences.setString('keyString', 'null')
-      sharedPreferences.setString('keyToRemoveString', 'valueToRemove')
-      sharedPreferences.removeValue('keyToRemoveString')
-      sharedPreferences.setJSON('keyStringJSON', {one: 'one'})
-      sharedPreferences.removeValues(['keyInt', 'keyFloat'])
+      prefs.setBool('keyBool', true)
+      prefs.setInt('keyInt', 0.0)
+      prefs.setFloat('keyFloat', 0.2)
+      prefs.setString('keyString', 'null')
+      prefs.setString('keyToRemoveString', 'valueToRemove')
+      prefs.removeValue('keyToRemoveString')
+      prefs.setJSON('keyStringJSON', {one: 'one'})
+      prefs.removeValues(['keyInt', 'keyFloat'])
 
-      console.log('bool', await sharedPreferences.getAll())
+      console.log('bool', await prefs.getAll())
 
-      // console.log('getBool', await sharedPreferences.getBool('keyBool', false))
+      // console.log('getBool', await prefs.getBool('keyBool', false))
       // console.log(
       //   'getBool1',
-      //   await sharedPreferences.getBool('keyBool1', false),
+      //   await prefs.getBool('keyBool1', false),
       // )
-      // console.log('getInt', await sharedPreferences.getInt('keyInt', 0))
-      // console.log('getFloat', await sharedPreferences.getFloat('keyFloat', 0))
+      // console.log('getInt', await prefs.getInt('keyInt', 0))
+      // console.log('getFloat', await prefs.getFloat('keyFloat', 0))
       // console.log(
       //   'keyToRemoveString',
-      //   await sharedPreferences.getString('keyToRemoveString', 'valueRemoved'),
+      //   await prefs.getString('keyToRemoveString', 'valueRemoved'),
       // )
       // console.log(
       //   'getString',
-      //   await sharedPreferences.getString('keyString', 'default'),
+      //   await prefs.getString('keyString', 'default'),
       // )
       //
-      // console.log('json', await sharedPreferences.getJSON('keyStringJSON', {}))
-      // console.log('json', await sharedPreferences.getKeys())
-      // const all = await sharedPreferences.getAll({})
+      // console.log('json', await prefs.getJSON('keyStringJSON', {}))
+      // console.log('json', await prefs.getKeys())
+      // const all = await prefs.getAll({})
       // console.log('json', all)
     })()
   }, [])
