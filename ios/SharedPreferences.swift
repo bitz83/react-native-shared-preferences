@@ -15,9 +15,9 @@ class SharedPreferences: RCTEventEmitter {
     }
     
     @objc
-    override public static func requiresMainQueueSetup() -> Bool {
-        return false
-    }
+    override public static func requiresMainQueueSetup() -> Bool { false }
+    
+    override func supportedEvents() -> [String]! { [] }
     
     @objc
     func initialize(_ suiteName: String?) {
