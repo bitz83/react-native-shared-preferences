@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, Text, View} from 'react-native'
+import {StyleSheet, View} from 'react-native'
 import {initializeSharedPreferences} from 'react-native-shared-preferences'
 
 const prefs = initializeSharedPreferences('suiteName')
