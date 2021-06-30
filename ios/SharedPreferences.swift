@@ -1,7 +1,8 @@
 import Foundation
+import React
 
 @objc(SharedPreferences)
-class SharedPreferences: NSObject {
+class SharedPreferences: RCTEventEmitter {
     private let VALUE_NOT_EXISTS = "VALUE_NOT_EXISTS";
     private let VALUE_NOT_EXISTS_CODE = "1";
     private var defaults: UserDefaults?
@@ -11,6 +12,11 @@ class SharedPreferences: NSObject {
             fatalError("UserDefaults must be initialized first")
         }
         return def
+    }
+    
+    @objc
+    override public static func requiresMainQueueSetup() -> Bool {
+        return false
     }
     
     @objc

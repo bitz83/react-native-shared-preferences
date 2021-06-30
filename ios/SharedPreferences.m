@@ -1,6 +1,7 @@
 #import <React/RCTBridgeModule.h>
+#import <React/RCTEventEmitter.h>
 
-@interface RCT_EXTERN_MODULE(SharedPreferences, NSObject)
+@interface RCT_EXTERN_MODULE(SharedPreferences, RCTEventEmitter)
 RCT_EXTERN_METHOD(initialize:(nullable NSString*)suiteName)
 
 RCT_EXTERN_METHOD(setInt:(NSString*)key value:(int)value)
