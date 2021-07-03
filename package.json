@@ -1,6 +1,6 @@
 {
   "name": "react-native-shared-preferences",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Shared Preferences Implementation for IOS and Android",
   "main": "src/index",
   "react-native": "src/index",
