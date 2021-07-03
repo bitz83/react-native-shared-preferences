@@ -1,6 +1,6 @@
 import {NativeModules} from 'react-native'
 
-interface SharedPreferences {
+export interface SharedPreferences {
   addListener(listener: Listener): void
   removeListener(listener: Listener): void
 
