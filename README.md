@@ -4,8 +4,12 @@ Shared Preferences Implementation for IOS and Android
 
 ## Installation
 
+```json
+"react-native-shared-preferences": "sergeymild/react-native-shared-preferences"
+```
+
 ```sh
-npm install react-native-shared-preferences
+yarn
 ```
 
 ## Usage
