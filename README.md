@@ -16,7 +16,7 @@ npx pod-install
 ## Usage
 
 ```ts
-import {sharedPreferences} from 'react-native-shared-preferences'
+import {initializeSharedPreferences} from 'react-native-shared-preferences'
 
 // ...
 
