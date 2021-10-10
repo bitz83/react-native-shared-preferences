@@ -10,6 +10,7 @@ Shared Preferences Implementation for IOS and Android
 
 ```sh
 yarn
+npx pod-install
 ```
 
 ## Usage
