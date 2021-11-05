@@ -76,7 +76,7 @@ class SharedPreferencesImpl implements SharedPreferences {
     validateIsNonNull(key, value)
     if (!Number.isInteger(value))
       throw new Error(`Passed value: ${value} key: ${key} is not integer type`)
-    NativePrefs.setInt(key, value)
+    NativePrefs.setString(key, value.toString())
     this.notifyValueSaved(key, value)
   }
 
@@ -98,7 +98,7 @@ class SharedPreferencesImpl implements SharedPreferences {
 
   async getInt(key: string, defaultValue: number = -1): Promise<number> {
     try {
-      return await NativePrefs.getInt(key)
+      return NativePrefs.getString(key)
     } catch (e) {
       if (e.message === VALUE_NOT_EXISTS) return defaultValue
       throw e
@@ -107,7 +107,7 @@ class SharedPreferencesImpl implements SharedPreferences {
 
   async getBool(key: string, defaultValue: boolean = false): Promise<boolean> {
     try {
-      return await NativePrefs.getBool(key)
+      return NativePrefs.getBool(key)
     } catch (e) {
       if (e.message === VALUE_NOT_EXISTS) return defaultValue
       throw e
@@ -125,7 +125,7 @@ class SharedPreferencesImpl implements SharedPreferences {
 
   async getString(key: string, defaultValue: string = ''): Promise<string> {
     try {
-      return await NativePrefs.getString(key)
+      return NativePrefs.getString(key)
     } catch (e) {
       if (e.message === VALUE_NOT_EXISTS) return defaultValue
       throw e
@@ -149,7 +149,7 @@ class SharedPreferencesImpl implements SharedPreferences {
   }
 
   async getAll(): Promise<any> {
-    return await NativePrefs.getAll()
+    return NativePrefs.getAll()
   }
 
   removeValue(key: string) {
