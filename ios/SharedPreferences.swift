@@ -26,9 +26,8 @@ class SharedPreferences: RCTEventEmitter {
     }
 
     @objc
-    func setInt(_ key: String, value: NSNumber) {
-        debugPrint("-", value.intValue)
-        ensureDefaults.set(value.intValue, forKey: key)
+    func setInt(_ key: String, value: Int) {
+        ensureDefaults.set(value, forKey: key)
     }
     
     @objc

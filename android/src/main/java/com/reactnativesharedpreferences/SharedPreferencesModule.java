@@ -56,8 +56,8 @@ public class SharedPreferencesModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void setInt(String key, String value) {
-    ensurePreferences().edit().putString(key, value).apply();
+  public void setInt(String key, int value) {
+    ensurePreferences().edit().putInt(key, value).apply();
   }
 
   @ReactMethod
@@ -82,7 +82,7 @@ public class SharedPreferencesModule extends ReactContextBaseJavaModule {
       promise.reject(VALUE_NOT_EXISTS_CODE, VALUE_NOT_EXISTS);
       return;
     }
-    promise.resolve(ensurePreferences().getString(key, "0"));
+    promise.resolve(ensurePreferences().getInt(key, 0));
   }
 
   @ReactMethod

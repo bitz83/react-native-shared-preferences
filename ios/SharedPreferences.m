@@ -4,7 +4,7 @@
 @interface RCT_EXTERN_MODULE(SharedPreferences, RCTEventEmitter)
 RCT_EXTERN_METHOD(initialize:(nullable NSString*)suiteName)
 
-RCT_EXTERN_METHOD(setInt:(NSString*)key value:(nonnull NSNumber*)value)
+RCT_EXTERN_METHOD(setInt:(NSString*)key value:(int)value)
 RCT_EXTERN_METHOD(setString:(NSString*)key value:(NSString*)value)
 RCT_EXTERN_METHOD(setFloat:(NSString*)key value:(float)value)
 RCT_EXTERN_METHOD(setBool:(NSString*)key value:(BOOL)value)
