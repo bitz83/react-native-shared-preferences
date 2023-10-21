@@ -54,3 +54,7 @@ See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the 
 ## License
 
 MIT
+
+## Thanks
+Thanks to sergeymild
+this is just a fork of his work
